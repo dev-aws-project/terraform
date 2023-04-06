@@ -1,0 +1,63 @@
+# Atlantis Configuration File
+
+# AWS Region
+aws_region: "us-east-1"
+
+# IAM Role ARN
+iam_role: "${iam_role}"
+
+# GitHub Provider
+gh-user: "${github_user}"
+gh-token: "${github_token}"
+gh-webhook-secret: "${github_webhook_secret}"
+
+
+
+# api-secret
+
+#config="/home/atlantis.yaml"
+
+
+
+repo-allowlist: "github.com/yuryMarket/aws-project/terraform"
+
+# atlantis-url: "http://$(hostname):{}"
+  
+
+# Atlantis Server Configuration
+server:
+  port: 4141
+  allowed_clients: [github.com]
+  # allow_custom_users: true
+  # allow_repo_config: true
+
+# # Atlantis Workflow Configuration
+# workflow:
+#   custom_workspace_path: "/var/atlantis"
+#   delete_source_branch_on_merge: true
+#   parallel_apply: true
+
+# # Terraform Version
+# terraform_version: "${terraform_version}"
+# terraform:
+#   dir: "aws-project/terraform"
+
+
+# Terraform Backend Configuration
+terraform_backend_config:
+  s3:
+    bucket: "${remote_backend_s3_bucket_name}"
+    key: "${remote_backend_s3_key}"
+    region: "${remote_backend_s3_region}"
+    encrypt: true
+
+# # Terraform Variables
+# terraform_variables:
+#   - name: environment
+#     description: "The environment to deploy to"
+#     type: string
+#     required: true
+#   - name: region
+#     description: "The AWS region to deploy to"
+#     type: string
+#     required: true
