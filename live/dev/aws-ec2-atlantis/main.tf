@@ -8,7 +8,7 @@ module "atlantis" {
   root_disk_size = 10
   # github_token   =  data.aws_ssm_parameter.github_token
   github_webhook_secret = data.aws_ssm_parameter.github_webhook_secret.value
-  github_repository =  "https://github.com/yuryMarket/aws-project"  
+  github_repository =  "https://github.com/yuryMarket/dev-aws-project/terraform"  
 
  # depends_on = [data.aws_ssm_parameter.atlantis_public_key, data.aws_ssm_parameter.atlantis_private_key]
 
