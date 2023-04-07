@@ -9,7 +9,7 @@
 
 
 resource "github_repository_webhook" "github_webhook" {
-  repository = "yuryMarket/aws-project"
+  repository = "terraform"
   events     = var.events 
   active     = true
   configuration {

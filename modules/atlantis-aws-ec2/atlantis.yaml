@@ -4,12 +4,12 @@
 aws_region: "us-east-1"
 
 # IAM Role ARN
-iam_role: "${iam_role}"
+iam_role: "arn:aws:iam::498561179155:role/atlantis-7aabe3bd"
 
 # GitHub Provider
-gh-user: "${github_user}"
-gh-token: "${github_token}"
-gh-webhook-secret: "${github_webhook_secret}"
+gh-user: ""
+gh-token: "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"
+gh-webhook-secret: ""
 
 
 
@@ -38,7 +38,7 @@ server:
 #   parallel_apply: true
 
 # # Terraform Version
-# terraform_version: "${terraform_version}"
+# terraform_version: "1.3.6"
 # terraform:
 #   dir: "aws-project/terraform"
 
@@ -46,9 +46,9 @@ server:
 # Terraform Backend Configuration
 terraform_backend_config:
   s3:
-    bucket: "${remote_backend_s3_bucket_name}"
-    key: "${remote_backend_s3_key}"
-    region: "${remote_backend_s3_region}"
+    bucket: "yury-aws-project-terraform-remote-state"
+    key: "aws-project/terraform/live/dev/aws-ec2-atlantis.tfstate"
+    region: "us-east-1"
     encrypt: true
 
 # # Terraform Variables
