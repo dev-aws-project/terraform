@@ -1,7 +1,7 @@
 provider "github" {
-  token = data.aws_ssm_parameter.atlantis_github_token.value
+  token = data.aws_ssm_parameter.github_token.value
   #oauth_token = data.aws_ssm_parameter.atlantis_github_token.value
-  #owner = "TechBotCI"
+  owner = "dev-aws-project"
 }
 
 
