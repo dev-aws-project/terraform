@@ -107,3 +107,13 @@ variable "atlantis_webhook_url" {
   type    = string
   default = ""
 }
+
+variable "atlantis_config_file_name" {
+  type    = string
+  default = "atlantis.yaml"
+}
+
+variable "host_private_key_name" {
+  type    = string
+  default = "private_key.pem"
+}

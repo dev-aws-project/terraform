@@ -32,6 +32,9 @@ data "aws_ssm_parameter" "github_webhook_secret" {
   name = "github-webhook-atlantis-secret"
 }
 
+output "atlantis_config_file_name" {
+  value = module.atlantis.atlantis_config_file_name
+}
 
 output "atlantis_URL" {
   value = module.atlantis.atlantis_url
@@ -40,3 +43,8 @@ output "atlantis_URL" {
 output "atlantis_host_dns" {
   value = module.atlantis.atlantis_host_dns
 }
+
+output "host_private_key_name" {
+  value = module.atlantis.host_private_key_name
+}
+
