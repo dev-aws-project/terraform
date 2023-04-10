@@ -1,70 +1,78 @@
-# docker = {
-    #   source  = "kreuzwerker/docker"
-    #   version = "3.0.2"
-    # }
-
-
-
-
-
-
-resource "null_resource" "start_container" {  
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo docker run  -d --name=atlantis -p 4141:4141  runatlantis/atlantis:latest atlantis server "
-    ]
-
-    connection {
-      type        = "ssh"
-    user        = "ubuntu"
-    host        = aws_instance.self.public_ip
-    private_key = file("${local_file.private_key_pem.filename}")
-    timeout     = "2m"
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "4.59.0"
+    }
+       
+    docker = {
+      source = "kreuzwerker/docker"
     }
   }
-  depends_on = [aws_instance.self]
 }
 
+provider "docker" {
+  host     = "ssh://ubuntu@${data.terraform_remote_state.aws_ec2_atlantis.outputs.atlantis_host_dns}:22"
+  #key_material = base64encode(file("${path.module}/../atlantis-aws-ec2/${data.terraform_remote_state.aws_ec2_atlantis.outputs.host_private_key_name}"))
+  ssh_opts = ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-i", "${file("${path.module}/../atlantis-aws-ec2/${data.terraform_remote_state.aws_ec2_atlantis.outputs.host_private_key_name}")}"]
+}
 
-# provider "docker" {
-#   host = "tcp://${aws_instance.self.public_ip}:2375/"
+data "terraform_remote_state" "aws_ec2_atlantis" {
+  backend = "s3"  
+  config = {
+    bucket = "yury-aws-project-terraform-remote-state"
+    key = "aws-project/terraform/live/dev/aws-ec2-atlantis.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-state-lock"
+   }
   
-# }
+  }
 
 
+# resource "null_resource" "start_container" {  
 
-# resource "docker_container" "atlantis" {
-  
-#   provider = docker
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo docker run  -d --name=atlantis -p 4141:4141  runatlantis/atlantis:latest atlantis server "
+#     ]
 
-#   name  = "atlantis"
-#   image = "runatlantis/atlantis:latest"
-#   command = ["atlantis", "server", "--config", "/home/atlantis/atlantis.yaml"]
-#   start = true
-#   ports {
-#     internal = 4141
-#     external = 4141
-#   }
-#   provisioner "file" {
-#     source = "${path.module}/atlantis.yaml"
-#     destination = "/home/atlantis"
-#   }
-
-#   restart = "always"
-
-#   connection {
+#     connection {
 #     type        = "ssh"
 #     user        = "ubuntu"
-#     host        = aws_instance.self.public_ip
-#     private_key = file("${local_file.private_key_pem.filename}")
+#     host        = data.terraform_remote_state.aws_ec2_atlantis.outputs.atlantis_host_dns
+#     private_key = file("../atlantis-aws-ec2/${local_file.private_key_pem.filename}")
 #     timeout     = "2m"
+#     }
 #   }
-#   depends_on = [
-#     aws_instance.self
-#   ]
 # }
 
+resource "docker_container" "atlantis" {
+  
+  provider = docker
+
+  name  = "atlantis"
+  image = "runatlantis/atlantis:latest"
+  command = ["atlantis", "server", "--config", "/home/atlantis/atlantis.yaml"]
+  start = true
+  ports {
+    internal = 4141
+    external = 4141
+  }
+  provisioner "file" {
+    source = "${path.module}/../atlantis-aws-ec2/atlantis.yaml"
+    destination = "/home/atlantis"
+  }
+
+  restart = "always"
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    host        = data.terraform_remote_state.aws_ec2_atlantis.outputs.atlantis_host_dns
+    private_key = file("${path.module}/../atlantis-aws-ec2/${data.terraform_remote_state.aws_ec2_atlantis.outputs.host_private_key_name}")
+    timeout     = "2m"
+  }
+}
 
 # resource "null_resource" "change_dir_owner"{
 #  provisioner "remote-exec" {

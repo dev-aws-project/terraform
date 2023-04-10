@@ -41,3 +41,11 @@ output "atlantis_url" {
 output "atlantis_host_dns" {
   value = aws_instance.self.public_dns
 }
+ 
+output "atlantis_config_file_name" {
+  value = var.atlantis_config_file_name
+}
+
+output "host_private_key_name" {
+  value = var.host_private_key_name
+}

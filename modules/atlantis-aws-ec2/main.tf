@@ -109,12 +109,12 @@ data "template_file" "atlantis_template_config" {
 
 resource "local_file" "private_key_pem" {
   content  = (var.private_key)
-  filename = "${path.module}/private_key.pem"
+  filename = "${path.module}/${var.host_private_key_name}"
 }
 
 resource "local_file" "atlantis_config" {
   content  = (data.template_file.atlantis_template_config.rendered)
-  filename = "${path.module}/atlantis.yaml"
+  filename = "${path.module}/${var.atlantis_config_file_name}"
 }
 
 resource "aws_instance" "self" {
@@ -204,6 +204,17 @@ resource "aws_security_group_rule" "allow_docker" {
   type              = "ingress"
   from_port         = 2375
   to_port           = 2375
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.self[0].id
+}
+
+resource "aws_security_group_rule" "allow_docker_tsl" {
+  count = length(var.secgroup_id) <= 0 ? 1 : 0
+
+  type              = "ingress"
+  from_port         = 2376
+  to_port           = 2376
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.self[0].id
