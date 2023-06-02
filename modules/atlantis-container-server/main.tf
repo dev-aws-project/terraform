@@ -4,7 +4,7 @@ terraform {
       source  = "hashicorp/aws"
       version = "4.59.0"
     }
-       
+
     docker = {
       source = "kreuzwerker/docker"
     }
@@ -12,21 +12,21 @@ terraform {
 }
 
 provider "docker" {
-  host     = "ssh://ubuntu@${data.terraform_remote_state.aws_ec2_atlantis.outputs.atlantis_host_dns}:22"
+  host = "ssh://ubuntu@${data.terraform_remote_state.aws_ec2_atlantis.outputs.atlantis_host_dns}:22"
   #key_material = base64encode(file("${path.module}/../atlantis-aws-ec2/${data.terraform_remote_state.aws_ec2_atlantis.outputs.host_private_key_name}"))
   ssh_opts = ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-i", "${file("${path.module}/../atlantis-aws-ec2/${data.terraform_remote_state.aws_ec2_atlantis.outputs.host_private_key_name}")}"]
 }
 
 data "terraform_remote_state" "aws_ec2_atlantis" {
-  backend = "s3"  
+  backend = "s3"
   config = {
-    bucket = "yury-aws-project-terraform-remote-state"
-    key = "aws-project/terraform/live/dev/aws-ec2-atlantis.tfstate"
+    bucket         = "yury-aws-project-terraform-remote-state"
+    key            = "aws-project/terraform/live/dev/aws-ec2-atlantis.tfstate"
     region         = "us-east-1"
     dynamodb_table = "terraform-state-lock"
-   }
-  
   }
+
+}
 
 
 # resource "null_resource" "start_container" {  
@@ -47,19 +47,19 @@ data "terraform_remote_state" "aws_ec2_atlantis" {
 # }
 
 resource "docker_container" "atlantis" {
-  
+
   provider = docker
 
-  name  = "atlantis"
-  image = "runatlantis/atlantis:latest"
+  name    = "atlantis"
+  image   = "runatlantis/atlantis:latest"
   command = ["atlantis", "server", "--config", "/home/atlantis/atlantis.yaml"]
-  start = true
+  start   = true
   ports {
     internal = 4141
     external = 4141
   }
   provisioner "file" {
-    source = "${path.module}/../atlantis-aws-ec2/atlantis.yaml"
+    source      = "${path.module}/../atlantis-aws-ec2/atlantis.yaml"
     destination = "/home/atlantis"
   }
 
